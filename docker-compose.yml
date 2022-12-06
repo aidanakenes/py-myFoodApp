@@ -1,0 +1,51 @@
+version: '2'
+
+x-environment-vars: &environment-vars
+  PYTHONUNBUFFERED: 1
+  PYTHONIOENCODING: utf-8
+  TERM: linux
+  POSTGRES_HOST_AUTH_METHOD: trust
+  POSTGRES_DSN: postgresql://postgres@db/postgres?sslmode=disable
+  REDIS_DSN: redis://cache
+  SEARCH_RESULTS_REDIS_TTL: 1800
+  CURRENCY_RESULTS_REDIS_TTL: 86400
+
+services:
+    web:
+        build:
+            context: .
+            dockerfile: ./docker/Dockerfile.local
+        environment:
+            <<: *environment-vars
+        depends_on:
+          - scheduler
+          - db
+        ports:
+            - "8000:8000"
+        volumes:
+            - .:/proj
+        command: python -m code.app
+        stdin_open: true
+        tty: true
+
+    scheduler:
+        build:
+            context: .
+            dockerfile: ./docker/Dockerfile.local
+        environment:
+            <<: *environment-vars
+        depends_on:
+          - cache
+        command: python -m code.scheduler
+        stdin_open: true
+        tty: true
+
+    db:
+      image: postgres:14.1-alpine
+      environment:
+        <<: *environment-vars
+
+    cache:
+      image: redis:7.0-rc1-alpine
+      environment:
+        <<: *environment-vars
