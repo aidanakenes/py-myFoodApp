@@ -14,7 +14,7 @@ async def search(request):
     await jsonschema_.validate(request.json, schemas.SEARCH_SCHEMA)
 
     search_id = str(uuid.uuid4())
-    db_offers = db.get_offers(request.json.get('search_pattern'))
+    db_offers = await db.get_offers(request.app.ctx.db_pool, request.json.get('search_pattern'))
 
     currency = request.json.get('currency')
     if currency != 'KZT':

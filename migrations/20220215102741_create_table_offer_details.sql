@@ -2,7 +2,9 @@
 
 CREATE TABLE IF NOT EXISTS offer_details (
     offer_details_id SERIAL PRIMARY KEY,
-    details json NOT NULL
+    title VARCHAR(50),
+    price INT,
+    details json
 );
 
 -- migrate:down

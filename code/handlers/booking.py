@@ -2,15 +2,12 @@ from sanic import Sanic, response
 
 import json
 
-from code import schemas
-from code import jsonschema_
 from code import db
 
 
 async def create_booking(request):
-    await jsonschema_.validate(request.json, schemas.BOOKING_SCHEMA)
-
-    booking_result = db.create_booking(request.json())
+    booking_id = await db.create_booking(request.app.ctx.db_pool, request.json)
+    booking_result = await db.get_booking(request.app.ctx.db_pool, booking_id)
 
     return response.json(booking_result, dumps=json.dumps, default=str)
 

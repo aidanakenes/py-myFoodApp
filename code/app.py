@@ -4,7 +4,7 @@ import aioredis
 
 import traceback
 
-from code.handlers import search, offers, booking
+from code.handlers import search, offers, booking, user
 from code import settings
 from code import currencies
 
@@ -32,10 +32,11 @@ app.register_listener(cleanup, "after_server_stop")
 
 app.error_handler.add(Exception, server_error_handler)
 
+app.add_route(user.sign_up, "/sign_up", methods=["POST"])
 app.add_route(search.search, "/search", methods=["POST"])
 app.add_route(search.search_by_id, "/search/<search_id:str>", methods=["GET"])
 
-app.add_route(offers.offer_details, "/offers/<offer_id:uuid>", methods=["GET"])
+app.add_route(offers.offer_details, "/offers/<offer_id>", methods=["GET"])
 
 app.add_route(booking.create_booking, "/booking", methods=["POST"])
 app.add_route(booking.booking_details, "/booking/<booking_id:uuid>", methods=["GET"])

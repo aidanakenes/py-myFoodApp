@@ -13,7 +13,7 @@ async def generate_currency_key(currency_to, currency_from):
 
 async def save_search_results(redis, search_data, search_id):
 
-    for s in search_data.get('items'):
+    for s in search_data:
         search_key = await generate_search_key(search_id, s.get('id'))
 
         await redis.setex(
@@ -34,10 +34,8 @@ async def update_search_status(redis, search_id, status):
 async def get_search_results(redis, search_id):
     search_key = await generate_search_key(search_id, '*')
 
-    search_status = await redis.get(search_id)
     search_cache_result = {
         'search_id': search_id,
-        'status': json.loads(search_status).get('status'),
         'count': 0,
         'items': [],
     }
@@ -62,6 +60,10 @@ async def get_offer_results(redis, offer_id):
     cur = b'0'
     while cur:
         cur, keys = await redis.scan(cur, match=search_offer_key, count=40)
+
+        print(100 * '?')
+        print(keys)
+        print(100*'?')
         for key in keys:
             offer_cache = await redis.get(key)
 

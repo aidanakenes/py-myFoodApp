@@ -21,7 +21,7 @@ services:
           - scheduler
           - db
         ports:
-            - "8000:8000"
+            - "9876:8000"
         volumes:
             - .:/proj
         command: python -m code.app
@@ -44,6 +44,8 @@ services:
       image: postgres:14.1-alpine
       environment:
         <<: *environment-vars
+      ports:
+          - "5432:5432"
 
     cache:
       image: redis:7.0-rc1-alpine
